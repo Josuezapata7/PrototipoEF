@@ -5,6 +5,13 @@
  */
 package PrototipoEF;
 
+import Multibodega.Multibodega;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import javax.swing.JOptionPane;
+import java.sql.*;
+
 /**
  *
  * @author Langas
@@ -14,6 +21,11 @@ public class Departamento extends javax.swing.JInternalFrame {
     /**
      * Creates new form Departamento
      */
+    
+    public static String Base_de_Datos = "jdbc:mysql://localhost/PrototipoEF";
+    public static String Usuario = "root";
+    public static String Clave = "root";
+    
     public Departamento() {
         initComponents();
     }
@@ -37,7 +49,13 @@ public class Departamento extends javax.swing.JInternalFrame {
         Btn_Modificar = new javax.swing.JButton();
         Btn_Eliminar = new javax.swing.JButton();
         lbl_estatus = new javax.swing.JLabel();
+        txt_buscar = new javax.swing.JTextField();
+        Btn_Buscar = new javax.swing.JButton();
+        Label_idB = new javax.swing.JLabel();
 
+        setIconifiable(true);
+        setMaximizable(true);
+        setVisible(true);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel_NombreD.setText("Nombre Departamento");
@@ -53,23 +71,142 @@ public class Departamento extends javax.swing.JInternalFrame {
         getContentPane().add(txt_EstatusD, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 250, 120, -1));
 
         Btn_Ingresar.setText("Ingresar");
-        getContentPane().add(Btn_Ingresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, -1, -1));
+        Btn_Ingresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Btn_IngresarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(Btn_Ingresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 70, -1, -1));
 
         Btn_Modificar.setText("Modificar");
-        getContentPane().add(Btn_Modificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 120, -1, -1));
+        Btn_Modificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Btn_ModificarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(Btn_Modificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 70, -1, -1));
 
         Btn_Eliminar.setText("Eliminar");
-        getContentPane().add(Btn_Eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 170, -1, -1));
-        getContentPane().add(lbl_estatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 380, 220, 60));
+        Btn_Eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Btn_EliminarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(Btn_Eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 120, -1, -1));
+        getContentPane().add(lbl_estatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 350, 220, 60));
+        getContentPane().add(txt_buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 200, 106, -1));
+
+        Btn_Buscar.setText("Buscar");
+        Btn_Buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Btn_BuscarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(Btn_Buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 250, -1, -1));
+
+        Label_idB.setText("Ingrese el ID Venta Departamento:");
+        getContentPane().add(Label_idB, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 200, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void Btn_IngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_IngresarActionPerformed
+        // TODO add your handling code here:
+        
+        try {
+            Connection cn = DriverManager.getConnection(Base_de_Datos, Usuario, Clave);
+            PreparedStatement pst = cn.prepareStatement("insert into Departamento values(?,?,?)");
+
+            pst.setString(1, txt_IDD.getText().trim());
+            pst.setString(2, txt_NombreD.getText().trim());
+            pst.setString(3, txt_EstatusD.getText().trim());
+
+            pst.executeUpdate();
+
+            txt_IDD.setText("");
+            txt_NombreD.setText("");
+            txt_EstatusD.setText("");
+
+            lbl_estatus.setText("Registro exitoso.");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }//GEN-LAST:event_Btn_IngresarActionPerformed
+
+    private void Btn_BuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_BuscarActionPerformed
+
+        //Codigo que permite consultar registros en la base de datos
+        try {
+            Connection cn = DriverManager.getConnection(Base_de_Datos, Usuario, Clave);
+            PreparedStatement pst = cn.prepareStatement("select * from Departamento where id_departamento = ?");
+            pst.setString(1, txt_buscar.getText().trim());
+
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                txt_IDD.setText(rs.getString("id_departamento"));
+                txt_NombreD.setText(rs.getString("nombre_departamento"));
+                txt_EstatusD.setText(rs.getString("estatus_departamento"));
+
+            } else {
+                JOptionPane.showMessageDialog(null, " No registrado.");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+
+        }
+    }//GEN-LAST:event_Btn_BuscarActionPerformed
+
+    private void Btn_ModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_ModificarActionPerformed
+        // TODO add your handling code here:
+        try {
+            String ID = txt_buscar.getText().trim();
+
+            Connection cn = DriverManager.getConnection(Base_de_Datos,Usuario,Clave);
+            PreparedStatement pst = cn.prepareStatement("update Departamento set id_departamento = ?, nombre_departamento=?, estatus_departamento=? where id_departamento = " + ID);
+
+            pst.setString(1, txt_IDD.getText().trim());
+            pst.setString(2, txt_NombreD.getText().trim());
+            pst.setString(3, txt_EstatusD.getText().trim());
+
+            pst.executeUpdate();
+
+            txt_buscar.setText("");
+            lbl_estatus.setText("Modificación exitosa.");
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }//GEN-LAST:event_Btn_ModificarActionPerformed
+
+    private void Btn_EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_EliminarActionPerformed
+        // TODO add your handling code here:
+         try {
+            Connection cn = DriverManager.getConnection(Base_de_Datos,Usuario,Clave);
+            PreparedStatement pst = cn.prepareStatement("delete from Departamento where id_departamento = ?");
+
+            pst.setString(1, txt_buscar.getText().trim());
+            pst.executeUpdate();
+
+            txt_IDD.setText("");
+            txt_NombreD.setText("");
+            txt_EstatusD.setText("");
+
+            lbl_estatus.setText("Registro eliminado.");
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }//GEN-LAST:event_Btn_EliminarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Btn_Buscar;
     private javax.swing.JButton Btn_Eliminar;
     private javax.swing.JButton Btn_Ingresar;
     private javax.swing.JButton Btn_Modificar;
+    private javax.swing.JLabel Label_idB;
     private javax.swing.JLabel jLabel_EstatusD;
     private javax.swing.JLabel jLabel_IDDepartamento1;
     private javax.swing.JLabel jLabel_NombreD;
@@ -77,5 +214,6 @@ public class Departamento extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txt_EstatusD;
     private javax.swing.JTextField txt_IDD;
     private javax.swing.JTextField txt_NombreD;
+    private javax.swing.JTextField txt_buscar;
     // End of variables declaration//GEN-END:variables
 }

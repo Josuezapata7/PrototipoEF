@@ -24,15 +24,16 @@ public class Login extends javax.swing.JFrame {
     /**
      * Creates new form Home
      */
+    
+    public static String Base_de_Datos = "jdbc:mysql://localhost/PrototipoEF";
+    public static String Usuario = "root";
+    public static String Clave = "root";
+    
     public Login() {
         initComponents();
         setLocationRelativeTo(null);
         
-        PrototipoEF PEF = new PrototipoEF();
-        PEF.setVisible(false);
         
-        Departamento D = new Departamento();
-        D.setVisible(false);
     }
 
     /**
