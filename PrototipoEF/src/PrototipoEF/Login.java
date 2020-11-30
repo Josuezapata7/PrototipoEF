@@ -1,6 +1,10 @@
 package PrototipoEF;
 
 
+import static Multibodega.Home.BD;
+import static Multibodega.Home.Contaseña;
+import static Multibodega.Home.Usuario;
+import Multibodega.Multibodega;
 import java.awt.Color;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -258,12 +262,59 @@ public class Login extends javax.swing.JFrame {
 
     private void kButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kButton2ActionPerformed
         // TODO add your handling code here:
-        
+        try{
+                Connection cn = DriverManager.getConnection(Base_de_Datos,Usuario,Clave);
+
+                PreparedStatement pst = cn.prepareStatement("insert into usuarios values(?,?)");
+                //en la variables pst de tipo coneccion a base de datos inserte
+                // pst.setString(1, "0");
+                pst.setString(1, txt_Nombre_Usuario.getText().trim());
+
+                pst.setString(2, txt_Contraseña_Usuario.getText().trim());
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(null, " USUARIO REGISTRADO CORRECTAMENTE");
+
+                txt_Nombre_Usuario.setText("");
+                txt_Contraseña_Usuario.setText("");
+
+            }catch (Exception e)
+            {
+                System.out.println(e);
+            }
         
     }//GEN-LAST:event_kButton2ActionPerformed
 
     private void kButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kButton1ActionPerformed
         // TODO add your handling code here:
+        try{
+            Connection cn = DriverManager.getConnection(Base_de_Datos,Usuario,Clave);
+            PreparedStatement pst = cn.prepareStatement("select * from Usuarios where Nombre_Usuario = ?");
+            pst.setString(1, txt_Nombre_Usuario.getText().trim());
+            
+            ResultSet rs = pst.executeQuery();
+            
+            PreparedStatement pstC = cn.prepareStatement("select * from Usuarios where Contraseña = ?");
+            pstC.setString(1, txt_Contraseña_Usuario.getText().trim());
+            
+            ResultSet rsC = pstC.executeQuery();
+            
+            if(rs.next()){
+                if(rsC.next())
+                {
+                    JOptionPane.showMessageDialog(null,"Bienvenido "+ txt_Nombre_Usuario.getText());
+                    this.dispose();
+                    PrototipoEF Mu = new PrototipoEF();
+                    Mu.setVisible(true);
+                    
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Usuario no registrado.");
+            }
+            
+        }catch (Exception e)
+        {
+            System.out.println(e);
+        }
         
     }//GEN-LAST:event_kButton1ActionPerformed
 
